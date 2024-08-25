@@ -1,0 +1,214 @@
+ /* Animation for products */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Style for Product component */
+.product {
+  animation: fadeInUp 0.5s ease-in-out;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  overflow: hidden;
+  border-radius: 10px;
+  background-color: #fff; /* Card background color */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hover effect for Product component */
+.product:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Meta component styling */
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: #333;
+}
+
+/* Pagination styling */
+.paginate {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.paginate a {
+  margin: 0 5px;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  color: #333;
+  text-decoration: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.paginate a:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+/* Loader styling */
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}
+
+/* Message component styling */
+.message {
+  text-align: center;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* HomeScreen container styling */
+.home-screen {
+  padding: 2rem;
+}
+
+.product-carousel {
+  margin-bottom: 2rem;
+}
+
+/* Base styles for dropdown */
+.category-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown toggle button */
+.category-dropdown .dropdown-toggle {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Hover effect for toggle button */
+.category-dropdown .dropdown-toggle:hover {
+  background-color: #28a745;
+  color: white;
+}
+
+/* Dropdown menu */
+.category-dropdown .dropdown-menu {
+  max-height: 300px;
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+/* Show the dropdown menu when active */
+.category-dropdown .dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: scaleY(1);
+}
+
+/* Dropdown item */
+.category-dropdown .dropdown-item {
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-align: center;
+}
+
+/* Hover effect for dropdown items */
+.category-dropdown .dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #343a40;
+}
+
+/* Animation for dropdown menu */
+@keyframes dropdownAnimation {
+  from {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+/* Base styles for category list */
+.category-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.category-list .category-item {
+  flex: 1 0 auto;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+  cursor: pointer;
+  background-color: #f8f9fa;
+}
+
+.category-list .category-item:hover {
+  background-color: #e9ecef;
+}
+
+/* Hide the category list on small screens */
+@media (max-width: 576px) {
+  .category-list {
+    display: none;
+  }
+
+  .category-dropdown {
+    display: block;
+  }
+}
+
+/* Product grid layout */
+.product-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem; /* Space between rows and columns */
+}
+
+/* Responsive adjustments for product cards */
+@media (min-width: 1200px) {
+  .product {
+    width: calc(25% - 2rem); /* 4 columns layout with spacing */
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .product {
+    width: calc(33.333% - 2rem); /* 3 columns layout with spacing */
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .product {
+    width: calc(50% - 2rem); /* 2 columns layout with spacing */
+  }
+}
+
+@media (max-width: 767px) {
+  .product {
+    width: calc(100% - 2rem); /* Single column layout with spacing */
+  }
+}
+
+@media (max-width: 576px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+}
