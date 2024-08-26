@@ -10,6 +10,7 @@ import {
   useUpdateProductMutation,
   useUploadProductImageMutation,
 } from '../../slices/productsApiSlice';
+import "../../assets/styles/ProductEditScreen.css";
 
 const ProductEditScreen = () => {
   const { id: productId } = useParams();

@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Navbar, Nav, Container, NavDropdown, Badge } from 'react-bootstrap';
+import { Navbar, Nav, Container, NavDropdown, Badge, Button } from 'react-bootstrap';
 import { FaShoppingCart, FaUser, FaHome, FaInfoCircle, FaAddressBook, FaMapMarkerAlt } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLogoutMutation } from '../slices/usersApiSlice';
 import { logout } from '../slices/authSlice';
 import SearchBox from './SearchBox';
-import logo from '../assets/logo.png';
+import logo from '../assets/logo.ico';
 import { resetCart } from '../slices/cartSlice';
 import LocationCard from './LocationCard';
 import '../assets/styles/Header.css';
@@ -60,7 +60,6 @@ const Header = () => {
         <Container>
           <Navbar.Brand as={Link} to='/'>
             <img src={logo} alt='EcoMart' />
-            EcoMart
           </Navbar.Brand>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
@@ -90,28 +89,24 @@ const Header = () => {
               </Nav.Link>
               {userInfo ? (
                 <>
-                  <NavDropdown title={userInfo.name} id='username'>
-                    <NavDropdown.Item as={Link} to='/profile'>
-                      Profile
-                    </NavDropdown.Item>
-                    <NavDropdown.Item onClick={logoutHandler}>
-                      Logout
-                    </NavDropdown.Item>
-                  </NavDropdown>
+                  <NavDropdown title={<><FaUser /> {userInfo.name}</>} id='username'>
+                  <NavDropdown.Item as={Link} to='/profile'>
+                    Profile
+                  </NavDropdown.Item>
+                  <NavDropdown.Item onClick={logoutHandler}>
+                    Logout
+                  </NavDropdown.Item>
+                   </NavDropdown>
                   {userInfo.isAdmin && (
-                    <NavDropdown title='Admin' id='adminmenu'>
-                      <NavDropdown.Item as={Link} to='/admin/productlist'>
-                        Products
-                      </NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to='/admin/orderlist'>
-                        Orders
-                      </NavDropdown.Item>
-                      <NavDropdown.Item as={Link} to='/admin/userlist'>
-                        Users
-                      </NavDropdown.Item><NavDropdown.Item as={Link} to='/admin/locations'>
-                        Locations
-                      </NavDropdown.Item>
-                    </NavDropdown>
+                    <>
+                      <Button
+                        variant='outline-light'
+                        className='ms-3 button-outline-light'
+                        onClick={() => navigate('/admin/dashboard')}
+                      >
+                        Dashboard
+                      </Button>
+                    </>
                   )}
                 </>
               ) : (
