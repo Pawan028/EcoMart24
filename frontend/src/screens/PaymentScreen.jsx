@@ -24,10 +24,7 @@ const PaymentScreen = () => {
   }, [navigate, shippingAddress]);
 
   const [paymentMethod, setPaymentMethod] = useState(PAYMENT_METHOD_RAZORPAY_CARD);
-  const [cardNumber, setCardNumber] = useState('');
-  const [expiryMonth, setExpiryMonth] = useState('');
-  const [expiryYear, setExpiryYear] = useState('');
-  const [cvv, setCvv] = useState('');
+  
 
   const dispatch = useDispatch();
 
@@ -83,68 +80,14 @@ const PaymentScreen = () => {
                   </div>
 
                   {paymentMethod === PAYMENT_METHOD_RAZORPAY_CARD && (
-                    <>
-                      <Form.Group className="mb-3">
-                        <Form.Label>Card Number</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="4111 1111 1111 1111"
-                          value={cardNumber}
-                          onChange={(e) => setCardNumber(e.target.value)}
-                        />
-                      </Form.Group>
-                      <Row className="mb-3">
-                        <Col>
-                          <Form.Group>
-                            <Form.Label>Expiry Month</Form.Label>
-                            <Form.Control
-                              as="select"
-                              value={expiryMonth}
-                              onChange={(e) => setExpiryMonth(e.target.value)}
-                            >
-                              {Array.from({ length: 12 }, (_, i) => (
-                                <option key={i} value={(i + 1).toString().padStart(2, '0')}>
-                                  {(i + 1).toString().padStart(2, '0')}
-                                </option>
-                              ))}
-                            </Form.Control>
-                          </Form.Group>
-                        </Col>
-                        <Col>
-                          <Form.Group>
-                            <Form.Label>Expiry Year</Form.Label>
-                            <Form.Control
-                              as="select"
-                              value={expiryYear}
-                              onChange={(e) => setExpiryYear(e.target.value)}
-                            >
-                              {Array.from({ length: 10 }, (_, i) => (
-                                <option key={i} value={(new Date().getFullYear() + i).toString()}>
-                                  {new Date().getFullYear() + i}
-                                </option>
-                              ))}
-                            </Form.Control>
-                          </Form.Group>
-                        </Col>
-                        <Col>
-                          <Form.Group>
-                            <Form.Label>CVV</Form.Label>
-                            <Form.Control
-                              type="text"
-                              placeholder="123"
-                              value={cvv}
-                              onChange={(e) => setCvv(e.target.value)}
-                            />
-                          </Form.Group>
-                        </Col>
-                      </Row>
-                    </>
+                     <Form.Group className="mb-3">
+                      
+                     </Form.Group>
                   )}
 
                   {paymentMethod === PAYMENT_METHOD_RAZORPAY_UPI && (
                     <Form.Group className="mb-3">
-                      <Form.Label>UPI ID</Form.Label>
-                      <Form.Control type="text" placeholder="example@upi" />
+                      
                     </Form.Group>
                   )}
 
