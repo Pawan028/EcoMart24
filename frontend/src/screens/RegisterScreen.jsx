@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../components/Loader';
-import FormContainer from '../components/FormContainer';
+ 
 
 import { useRegisterMutation } from '../slices/usersApiSlice';
 import { setCredentials } from '../slices/authSlice';
@@ -68,81 +68,94 @@ const RegisterScreen = () => {
   };
 
   return (
-    <FormContainer>
-      <h1>Register</h1>
-      <Form noValidate validated={validated} onSubmit={submitHandler}>
-        <Form.Group className='my-2' controlId='name'>
-          <Form.Label>Name</Form.Label>
-          <Form.Control
-            required
-            type='text'
-            placeholder='Enter name'
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <Form.Control.Feedback type='invalid'>
-            Name must be at least 3 characters long and contain only letters.
-          </Form.Control.Feedback>
-        </Form.Group>
+    <div className="relative min-h-screen flex items-center justify-center bg-moving-pattern bg-cover bg-center">
+      <div className="absolute inset-0 bg-black opacity-40"></div>
+      <div className="relative z-10 bg-white p-8 rounded-xl shadow-xl transform transition-transform hover:scale-105 hover:shadow-2xl max-w-sm mx-auto">
+        <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Register</h1>
 
-        <Form.Group className='my-2' controlId='email'>
-          <Form.Label>Email Address</Form.Label>
-          <Form.Control
-            required
-            type='email'
-            placeholder='Enter email'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Form.Control.Feedback type='invalid'>
-            Please provide a valid email address.
-          </Form.Control.Feedback>
-        </Form.Group>
+        <Form noValidate validated={validated} onSubmit={submitHandler}>
+          <Form.Group className='my-4' controlId='name'>
+            <Form.Label className='text-lg font-semibold text-gray-700'>Name</Form.Label>
+            <Form.Control
+              required
+              type='text'
+              placeholder='Enter name'
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className='mt-1 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-transform duration-300 ease-in-out'
+            />
+            <Form.Control.Feedback type='invalid'>
+              Name must be at least 3 characters long and contain only letters.
+            </Form.Control.Feedback>
+          </Form.Group>
 
-        <Form.Group className='my-2' controlId='password'>
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            required
-            type='password'
-            placeholder='Enter password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Form.Control.Feedback type='invalid'>
-            Password must be at least 6 characters.
-          </Form.Control.Feedback>
-        </Form.Group>
+          <Form.Group className='my-4' controlId='email'>
+            <Form.Label className='text-lg font-semibold text-gray-700'>Email Address</Form.Label>
+            <Form.Control
+              required
+              type='email'
+              placeholder='Enter email'
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className='mt-1 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-transform duration-300 ease-in-out'
+            />
+            <Form.Control.Feedback type='invalid'>
+              Please provide a valid email address.
+            </Form.Control.Feedback>
+          </Form.Group>
 
-        <Form.Group className='my-2' controlId='confirmPassword'>
-          <Form.Label>Confirm Password</Form.Label>
-          <Form.Control
-            required
-            type='password'
-            placeholder='Confirm password'
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-          <Form.Control.Feedback type='invalid'>
-            Please confirm your password.
-          </Form.Control.Feedback>
-        </Form.Group>
+          <Form.Group className='my-4' controlId='password'>
+            <Form.Label className='text-lg font-semibold text-gray-700'>Password</Form.Label>
+            <Form.Control
+              required
+              type='password'
+              placeholder='Enter password'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className='mt-1 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-transform duration-300 ease-in-out'
+            />
+            <Form.Control.Feedback type='invalid'>
+              Password must be at least 6 characters.
+            </Form.Control.Feedback>
+          </Form.Group>
 
-        <Button disabled={isLoading} type='submit' variant='primary'>
-          Register
-        </Button>
+          <Form.Group className='my-4' controlId='confirmPassword'>
+            <Form.Label className='text-lg font-semibold text-gray-700'>Confirm Password</Form.Label>
+            <Form.Control
+              required
+              type='password'
+              placeholder='Confirm password'
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className='mt-1 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-transform duration-300 ease-in-out'
+            />
+            <Form.Control.Feedback type='invalid'>
+              Please confirm your password.
+            </Form.Control.Feedback>
+          </Form.Group>
 
-        {isLoading && <Loader />}
-      </Form>
+          <Button
+            disabled={isLoading}
+            type='submit'
+            variant='primary'
+            className='w-full py-2 rounded-lg bg-green-600 text-white font-semibold shadow-md hover:bg-green-700 transition-transform duration-300 ease-in-out'
+          >
+            Register
+          </Button>
 
-      <Row className='py-3'>
-        <Col>
-          Already have an account?{' '}
-          <Link to={redirect ? `/login?redirect=${redirect}` : '/login'}>
-            Login
-          </Link>
-        </Col>
-      </Row>
-    </FormContainer>
+          {isLoading && <Loader />}
+        </Form>
+
+        <Row className='py-3'>
+          <Col className='text-center'>
+            Already have an account?{' '}
+            <Link to={redirect ? `/login?redirect=${redirect}` : '/login'} className='text-green-600 hover:underline'>
+              Login
+            </Link>
+          </Col>
+        </Row>
+      </div>
+    </div>
   );
 };
 

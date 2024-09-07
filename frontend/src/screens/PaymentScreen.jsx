@@ -24,7 +24,7 @@ const PaymentScreen = () => {
   }, [navigate, shippingAddress]);
 
   const [paymentMethod, setPaymentMethod] = useState(PAYMENT_METHOD_RAZORPAY_CARD);
-  
+   
 
   const dispatch = useDispatch();
 
@@ -81,13 +81,13 @@ const PaymentScreen = () => {
 
                   {paymentMethod === PAYMENT_METHOD_RAZORPAY_CARD && (
                      <Form.Group className="mb-3">
-                      
+                       
                      </Form.Group>
                   )}
 
                   {paymentMethod === PAYMENT_METHOD_RAZORPAY_UPI && (
                     <Form.Group className="mb-3">
-                      
+                       
                     </Form.Group>
                   )}
 
