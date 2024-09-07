@@ -47,7 +47,7 @@ const App = () => {
         <>
           <ToastContainer />
           <Header setShowCard={setShowCard} />
-          <main className='py-3'>
+          <main className='pt-28 lg:pt-36'>
             <Container>
               <Outlet />
             </Container>
