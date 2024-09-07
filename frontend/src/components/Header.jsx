@@ -55,7 +55,7 @@ const Header = () => {
   return (
     <>
       {/* Header Section */}
-      <header className="bg-[#efeff4] text-black shadow-md py-2 fixed top-0 left-0 w-full z-50 h-22">
+      <header className="bg-[#efeff4] text-black shadow-md py-2 fixed top-0 left-0 w-full z-50 h-20">
   <div className="container mx-auto px-4 flex justify-between items-center h-20">
     {/* Logo */}
     <Link to="/" className="flex items-center">
@@ -127,7 +127,7 @@ const Header = () => {
 
   {/* Mobile Search Bar */}
   <div className="lg:hidden flex flex-col">
-    <div className="bg-[#efeff4] text-black py-2 px-4">
+    <div className=" text-black py-2 px-4">
       <SearchBox />
     </div>
   </div>
