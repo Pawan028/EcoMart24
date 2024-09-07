@@ -47,7 +47,7 @@ const App = () => {
         <>
           <ToastContainer />
           <Header setShowCard={setShowCard} />
-          <main className='pt-28 lg:pt-36'>
+          <main className='pt-36 lg:pt-44'>
             <Container>
               <Outlet />
             </Container>
