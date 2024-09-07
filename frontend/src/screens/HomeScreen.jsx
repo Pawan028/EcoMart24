@@ -62,7 +62,7 @@ const HomeScreen = () => {
     <>
       <Meta title="Welcome to EcoMart | Home" />
 
-      <div className="relative z-10 w-full h-full bg-gray-100">
+      <div className="relative z-10 w-full h-full">
         {/* Hero Section with Image */}
         <div className="hero-section py-8">
           {!keyword ? (
