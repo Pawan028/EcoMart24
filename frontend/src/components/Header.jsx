@@ -54,8 +54,8 @@ const Header = () => {
 
   return (
     <>
-      {/* Fixed Header */}
-      <header className="fixed top-0 left-0 w-full bg-[#efeff4] text-black shadow-md py-4 z-50">
+      {/* Header Section */}
+      <header className="bg-[#efeff4] text-black shadow-md py-1 z-10">
         <div className="container mx-auto px-4 flex justify-between items-center">
           {/* Logo */}
           <Link to="/" className="flex items-center">
@@ -188,11 +188,6 @@ const Header = () => {
           <LocationCard setShowCard={setShowCard} ref={cardRef} />
         </div>
       )}
-
-      {/* Content Area */}
-      <main className="pt-20">
-        {/* Your main content goes here */}
-      </main>
     </>
   );
 };
