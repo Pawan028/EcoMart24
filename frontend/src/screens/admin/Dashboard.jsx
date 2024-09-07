@@ -6,7 +6,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="px-6 py-8 bg-gray-100 min-h-screen">
+    <div className="px-6 py-8 min-h-screen">
       {/* Welcome Section */}
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-800">Welcome to the Admin Dashboard</h2>
