@@ -38,9 +38,9 @@ const Header = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (cardRef.current && !cardRef.current.contains(event.target) && isMenuOpen) {
+      if (cardRef.current && !cardRef.current.contains(event.target) && isMenuOpen ) {
         setIsMenuOpen(false);
-        setShowCard(false);
+        
          
       }
     };
@@ -48,7 +48,7 @@ const Header = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isMenuOpen],[showCard]);
+  }, [isMenuOpen] );
 
 
   useEffect(() => {
@@ -80,17 +80,14 @@ const Header = () => {
     <Link to="/" className="flex items-center">
       <img src={logo} alt="EcoMart" className="h-8 " /> {/* Reduced logo size */}
       <span className="ml-2 text-lg font-bold ">EcoMart</span>
-       
-    </Link>
-    <button  className="mr-80 flex items-center">
-    <FaMapMarkerAlt
-        className="hidden lg:block  text-lg hover:text-emerald-900 transition-transform duration-300 transform hover:scale-110 cursor-pointer"
+      <FaMapMarkerAlt
+        className="hidden lg:block ml-3 text-lg hover:text-emerald-900 transition-transform duration-300 transform hover:scale-110 cursor-pointer"
         onClick={() => setShowCard(!showCard)}
       />
-      <span className="hidden lg:block ml-1 text-sm hover:text-emerald-900 transition-transform duration-300 transform hover:scale-110 cursor-pointer" onClick={() => setShowCard(!showCard)}>
+      <span className="hidden lg:block ml-2 text-sm hover:text-emerald-900 transition-transform duration-300 transform hover:scale-110 cursor-pointer" onClick={() => setShowCard(!showCard)}>
         Set Location
       </span>
-    </button>
+    </Link>
 
     {/* Mobile Menu Toggle */}
 <div className="lg:hidden fixed  right-4 z-50"> {/* Fixed positioning */}
