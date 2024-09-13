@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaShoppingCart, FaUser, FaHome, FaInfoCircle, FaAddressBook, FaBars, FaMapMarkerAlt, FaSignOutAlt, FaTachometerAlt } from 'react-icons/fa';
+import { FaShoppingCart, FaUser, FaHome, FaInfoCircle, FaAddressBook, FaBars, FaMapMarkerAlt, FaSignOutAlt, FaTachometerAlt, FaSearch } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLogoutMutation } from '../slices/usersApiSlice';
@@ -13,6 +13,7 @@ const Header = () => {
   const { cartItems } = useSelector((state) => state.cart);
   const { userInfo } = useSelector((state) => state.auth);
   const [showCard, setShowCard] = useState(false);
+  const [showSearch, setShowSearch] = useState(false); // State for search bar visibility
   const cardRef = useRef(null); // Ref for the location card
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
@@ -37,6 +38,10 @@ const Header = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const toggleSearch = () => {
+    setShowSearch(!showSearch); // Toggle search bar visibility
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (cardRef.current && !cardRef.current.contains(event.target) && isMenuOpen ) {
@@ -48,7 +53,7 @@ const Header = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isMenuOpen],[showCard]);
+  }, [isMenuOpen, showCard]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -73,7 +78,7 @@ const Header = () => {
   return (
     <>
       {/* Header Section */}
-      <header className="bg-emerald-500 text-white shadow-md py-2 fixed top-0 left-0 w-full z-50 h-20">
+      <header className="bg-emerald-500 text-white shadow-md top-0 left-0 w-full  h-20">
         <div className="container mx-auto px-4 flex justify-between items-center h-full">
           {/* Logo */}
           <Link to="/" className="flex items-center">
@@ -89,12 +94,18 @@ const Header = () => {
           </Link>
 
           {/* Mobile Menu Toggle */}
-          <div className="lg:hidden fixed right-4 top-2 z-50">
+          <div className="lg:hidden flex items-center space-x-2">
+            <button 
+              onClick={toggleSearch} 
+              className="p-2 rounded-md hover:bg-emerald-900 transition-transform duration-300 transform hover:scale-110 cursor-pointer"
+            >
+              <FaSearch className="text-2xl" />
+            </button>
             <button 
               onClick={toggleMenu} 
               className="flex flex-col items-center justify-center p-2 rounded-md hover:bg-emerald-900 transition-transform duration-300 transform hover:scale-110 cursor-pointer"
             >
-              <FaBars className="text-3xl text-emerald-100" />
+              <FaBars className="text-3xl" />
             </button>
           </div>
 
@@ -141,11 +152,11 @@ const Header = () => {
         </div>
 
         {/* Mobile Search Bar */}
-        <div className="lg:hidden flex flex-col">
-          <div className="text-black py-2 px-4">
+        {showSearch && (
+          <div className="lg:hidden flex flex-col py-2 px-4">
             <SearchBox />
           </div>
-        </div>
+        )}
       </header>
 
       {/* Mobile Dropdown Menu */}
