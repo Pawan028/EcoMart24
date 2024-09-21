@@ -1,4 +1,4 @@
-import { useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useGetProductsQuery } from '../slices/productsApiSlice';
 import Product from '../components/Product';
@@ -71,7 +71,7 @@ const HomeScreen = () => {
               className="category-item cursor-pointer flex flex-col items-center p-4 border rounded-lg shadow-lg bg-white transform transition-transform hover:scale-105 hover:shadow-xl hover:bg-gray-100 ease-in-out duration-300"
               onClick={() => handleCategorySelect('')}
             >
-              <i className="fas fa-apple-alt justify-center text-3xl mb-2 text-green-500"></i> {/* Green icon */}
+              <i className="fas fa-apple-alt justify-center text-3xl mb-2 text-green-500"></i>
               <span className="text-lg font-medium justify-center">All Categories</span>
             </div>
             {categories.map((category, index) => (
@@ -80,14 +80,14 @@ const HomeScreen = () => {
                 className="category-item cursor-pointer flex flex-col justify-center items-center p-4 border rounded-lg shadow-lg bg-white transform transition-transform hover:scale-105 hover:shadow-xl hover:bg-emerald-500 ease-in-out duration-300"
                 onClick={() => handleCategorySelect(category)}
               >
-                <i className={`icon-${category.toLowerCase()} text-3xl mb-2 text-green-500`}></i> {/* Green icon */}
+                <i className={`icon-${category.toLowerCase()} text-3xl mb-2 text-green-500`}></i>
                 <span className="text-lg font-medium">{category}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* High-Rated Products Section - Fully Touch-Scrollable */}
+        {/* High-Rated Products Section */}
         <div className="high-rated-section mb-6 px-4 py-6">
           <h2 className="text-2xl font-bold mb-4 text-gray-800">Top Rated Products</h2>
           {isLoading ? (
@@ -97,10 +97,10 @@ const HomeScreen = () => {
               {error?.data?.message || error.error}
             </Message>
           ) : (
-            <div className="carousel-container flex overflow-x-auto touch-pan-x whitespace-nowrap space-x-4 scrollbar-hide px-2">
+            <div className="grid grid-cols-2 gap-4">
               {highRatedProducts.length ? (
                 highRatedProducts.map((product) => (
-                  <div key={product._id} className="carousel-card min-w-[300px] bg-white border rounded shadow-md hover:shadow-lg transition duration-300">
+                  <div key={product._id} className="bg-white border rounded shadow-md hover:shadow-lg transition duration-300">
                     <Product product={product} />
                   </div>
                 ))
@@ -122,9 +122,9 @@ const HomeScreen = () => {
                 {error?.data?.message || error.error}
               </Message>
             ) : (
-              <div className="carousel-container flex overflow-x-auto touch-pan-x whitespace-nowrap space-x-4 scrollbar-hide px-2">
+              <div className="grid grid-cols-2 gap-4">
                 {data.products.filter((product) => product.category === category).map((product) => (
-                  <div key={product._id} className="carousel-card min-w-[300px] bg-white border rounded shadow-md hover:shadow-lg transition duration-300">
+                  <div key={product._id} className="bg-white border rounded shadow-md hover:shadow-lg transition duration-300">
                     <Product product={product} />
                   </div>
                 ))}
