@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaSearch, FaTimes } from 'react-icons/fa';
 
-const SearchBox = () => {
+const SearchBox = ({ showPopular = false }) => {
   const navigate = useNavigate();
   const { keyword: urlKeyword } = useParams();
   const [keyword, setKeyword] = useState(urlKeyword || '');
@@ -68,23 +68,25 @@ const SearchBox = () => {
         </button>
       </div>
 
-      {/* Popular Searches */}
-      <div className="mt-4 flex flex-wrap items-center gap-2 justify-center">
-        <span className="text-sm text-gray-500">Popular:</span>
-        {['Tomato', 'Onion', 'Milk', 'Rice', 'Fruits'].map((term) => (
-          <button
-            key={term}
-            type="button"
-            onClick={() => {
-              setKeyword(term);
-              navigate(`/search/${term}`);
-            }}
-            className="px-3 py-1 text-sm bg-gray-100 hover:bg-green-100 text-gray-700 hover:text-green-700 rounded-full transition-colors duration-200"
-          >
-            {term}
-          </button>
-        ))}
-      </div>
+      {/* Popular Searches - Only show if showPopular prop is true */}
+      {showPopular && (
+        <div className="mt-4 flex flex-wrap items-center gap-2 justify-center">
+          <span className="text-sm text-gray-500">Popular:</span>
+          {['Tomato', 'Onion', 'Milk', 'Rice', 'Fruits'].map((term) => (
+            <button
+              key={term}
+              type="button"
+              onClick={() => {
+                setKeyword(term);
+                navigate(`/search/${term}`);
+              }}
+              className="px-3 py-1 text-sm bg-gray-100 hover:bg-green-100 text-gray-700 hover:text-green-700 rounded-full transition-colors duration-200"
+            >
+              {term}
+            </button>
+          ))}
+        </div>
+      )}
     </form>
   );
 };
