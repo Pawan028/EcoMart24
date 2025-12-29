@@ -16,6 +16,8 @@ const HomeScreen = () => {
   const [highRatedProducts, setHighRatedProducts] = useState([]);
   const [showLocationBanner, setShowLocationBanner] = useState(true);
   const [savedLocation, setSavedLocation] = useState(null);
+  const [sortBy, setSortBy] = useState('default');
+  const [priceRange, setPriceRange] = useState('all');
   const navigate = useNavigate();
 
   const { data, isLoading, error } = useGetProductsQuery({
@@ -72,6 +74,46 @@ const HomeScreen = () => {
   const getCategoryIcon = (category) => {
     const IconComponent = categoryIcons[category] || FaLeaf;
     return <IconComponent className="text-4xl mb-3 text-green-600 group-hover:text-white transition-colors duration-300" />;
+  };
+
+  // Sort and filter products for search results
+  const getFilteredAndSortedProducts = () => {
+    if (!data?.products) return [];
+    
+    let filtered = [...data.products];
+    
+    // Filter by price range
+    if (priceRange !== 'all') {
+      const ranges = {
+        'under50': [0, 50],
+        '50to100': [50, 100],
+        '100to200': [100, 200],
+        'above200': [200, Infinity]
+      };
+      const [min, max] = ranges[priceRange] || [0, Infinity];
+      filtered = filtered.filter(p => p.price >= min && p.price < max);
+    }
+    
+    // Sort products
+    switch (sortBy) {
+      case 'priceLow':
+        filtered.sort((a, b) => a.price - b.price);
+        break;
+      case 'priceHigh':
+        filtered.sort((a, b) => b.price - a.price);
+        break;
+      case 'rating':
+        filtered.sort((a, b) => b.rating - a.rating);
+        break;
+      case 'nameAZ':
+        filtered.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      default:
+        // default order from API
+        break;
+    }
+    
+    return filtered;
   };
 
   return (
@@ -363,15 +405,129 @@ const HomeScreen = () => {
         )}
 
         {/* All Products Grid when keyword is present */}
-        {keyword && data?.products && (
+        {keyword && (
           <div className="mb-12 px-4 md:px-6">
             <div className="max-w-7xl mx-auto">
-              <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Search Results</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {data.products.map((product) => (
-                  <Product key={product._id} product={product} />
-                ))}
+              {/* Search Header */}
+              <div className="mb-6">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+                  <div>
+                    <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                      Search Results for "{keyword}"
+                    </h3>
+                    {data?.products && (
+                      <p className="text-gray-600">
+                        Found <span className="font-semibold text-green-600">{getFilteredAndSortedProducts().length}</span> product{getFilteredAndSortedProducts().length !== 1 ? 's' : ''}
+                      </p>
+                    )}
+                  </div>
+                  <Link 
+                    to="/" 
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors duration-200"
+                  >
+                    <FaTimes />
+                    Clear Search
+                  </Link>
+                </div>
+
+                {/* Filters and Sorting */}
+                <div className="flex flex-col md:flex-row gap-4 p-4 bg-white rounded-xl shadow-sm border border-gray-200">
+                  {/* Sort By */}
+                  <div className="flex-1">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Sort By
+                    </label>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-green-500 transition-colors duration-200"
+                    >
+                      <option value="default">Default</option>
+                      <option value="priceLow">Price: Low to High</option>
+                      <option value="priceHigh">Price: High to Low</option>
+                      <option value="rating">Highest Rated</option>
+                      <option value="nameAZ">Name: A to Z</option>
+                    </select>
+                  </div>
+
+                  {/* Price Range */}
+                  <div className="flex-1">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Price Range
+                    </label>
+                    <select
+                      value={priceRange}
+                      onChange={(e) => setPriceRange(e.target.value)}
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-green-500 transition-colors duration-200"
+                    >
+                      <option value="all">All Prices</option>
+                      <option value="under50">Under ₹50</option>
+                      <option value="50to100">₹50 - ₹100</option>
+                      <option value="100to200">₹100 - ₹200</option>
+                      <option value="above200">Above ₹200</option>
+                    </select>
+                  </div>
+
+                  {/* Reset Filters */}
+                  {(sortBy !== 'default' || priceRange !== 'all') && (
+                    <div className="flex items-end">
+                      <button
+                        onClick={() => {
+                          setSortBy('default');
+                          setPriceRange('all');
+                        }}
+                        className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors duration-200 font-semibold whitespace-nowrap"
+                      >
+                        Reset Filters
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
+
+              {/* Products Grid */}
+              {isLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {[...Array(8)].map((_, index) => (
+                    <ProductSkeleton key={index} />
+                  ))}
+                </div>
+              ) : error ? (
+                <Message variant="danger">
+                  {error?.data?.message || error.error}
+                </Message>
+              ) : getFilteredAndSortedProducts().length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {getFilteredAndSortedProducts().map((product) => (
+                    <Product key={product._id} product={product} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-16 bg-white rounded-2xl shadow-sm">
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
+                    <FaLeaf className="text-4xl text-gray-400" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-700 mb-2">No products found</h3>
+                  <p className="text-gray-500 mb-6">Try adjusting your filters or search term</p>
+                  <div className="flex gap-3 justify-center">
+                    <button
+                      onClick={() => {
+                        setSortBy('default');
+                        setPriceRange('all');
+                      }}
+                      className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition-colors duration-200"
+                    >
+                      Reset Filters
+                    </button>
+                    <Link
+                      to="/"
+                      className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-300"
+                    >
+                      Browse All Products
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

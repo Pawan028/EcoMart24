@@ -17,6 +17,8 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [hideHeader, setHideHeader] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const menuRef = useRef(null);
   const cardRef = useRef(null);
   const userDropdownRef = useRef(null);
@@ -47,14 +49,29 @@ const Header = () => {
     setShowSearch(!showSearch);
   };
 
-  // Handle scroll effect
+  // Handle scroll effect with auto-hide/show
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      const currentScrollY = window.scrollY;
+      
+      // Set scrolled state
+      setIsScrolled(currentScrollY > 20);
+      
+      // Auto-hide on scroll down, show on scroll up
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scrolling down & past 100px
+        setHideHeader(true);
+      } else {
+        // Scrolling up or near top
+        setHideHeader(false);
+      }
+      
+      setLastScrollY(currentScrollY);
     };
+    
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
   // Handle click outside
   useEffect(() => {
@@ -80,7 +97,7 @@ const Header = () => {
       {/* Main Header */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled ? 'bg-white shadow-lg' : 'bg-gradient-to-r from-green-600 to-emerald-600'
-      }`}>
+      } ${hideHeader ? '-translate-y-full' : 'translate-y-0'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
