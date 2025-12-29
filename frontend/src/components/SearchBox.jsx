@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaSearch, FaTimes } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
 
 const SearchBox = ({ showPopular = false }) => {
   const navigate = useNavigate();
@@ -16,11 +16,6 @@ const SearchBox = ({ showPopular = false }) => {
     } else {
       navigate('/');
     }
-  };
-
-  const clearSearch = () => {
-    setKeyword('');
-    navigate('/');
   };
 
   return (
@@ -46,18 +41,6 @@ const SearchBox = ({ showPopular = false }) => {
           placeholder="Search for fresh vegetables, fruits, groceries..."
           className="flex-1 py-4 px-2 bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none text-base"
         />
-
-        {/* Clear Button */}
-        {keyword && (
-          <button
-            type="button"
-            onClick={clearSearch}
-            className="p-2 mr-2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
-            aria-label="Clear search"
-          >
-            <FaTimes />
-          </button>
-        )}
 
         {/* Search Button */}
         <button
