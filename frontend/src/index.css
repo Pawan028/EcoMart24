@@ -1,48 +1,92 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@keyframes moveBackground {
-    0% {
-      background-position: 0 0;
-    }
-    100% {
-      background-position: 100% 100%;
-    }
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
   }
-  
-  .bg-moving-pattern {
-    background: url('https://img.freepik.com/free-vector/abstract-pattern-design_1053-539.jpg?ga=GA1.1.870505841.1725646127&semt=ais_hybrid');
-    background-size: cover;
-    animation: moveBackground 20s linear infinite;
+  50% {
+    background-position: 100% 50%;
   }
-  @keyframes floatBackground {
-    0% {
-      background-position: 0% 0%;
-    }
-    50% {
-      background-position: 100% 100%;
-    }
-    100% {
-      background-position: 0% 0%;
-    }
+  100% {
+    background-position: 0% 50%;
   }
-  
-  body {
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
+}
+
+@keyframes float-shapes {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.1;
   }
-  
-  html, body, #root {
-    height: 100%;  
+  50% {
+    transform: translateY(-30px) rotate(180deg);
+    opacity: 0.15;
   }
-  
-  body.bg-moving-pattern {
-    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvRGMynJL2xouYyQKkgmRAkjxReXpAHHbP4Q&s'); 
-    background-size: 200% 200%;  
-    animation: floatBackground 20s linear infinite;  
-    background-attachment: fixed;  
-    background-repeat: no-repeat;
-    background-position: center;
-    background-color: #f0f0f0; 
+  100% {
+    transform: translateY(0px) rotate(360deg);
+    opacity: 0.1;
   }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+html, body, #root {
+  height: 100%;  
+}
+
+body.bg-moving-pattern {
+  background: linear-gradient(-45deg, #ffffff 0%, #f0f5f0 25%, #e8f5e9 50%, #f1f8f6 75%, #ffffff 100%);
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+  background-attachment: fixed;
+  position: relative;
+}
+
+/* Subtle geometric pattern overlay */
+body.bg-moving-pattern::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(76, 175, 80, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(56, 142, 60, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(129, 199, 132, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Subtle dots and lines pattern */
+body.bg-moving-pattern::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(76, 175, 80, 0.03) 2px,
+      rgba(76, 175, 80, 0.03) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(76, 175, 80, 0.03) 2px,
+      rgba(76, 175, 80, 0.03) 4px
+    );
+  pointer-events: none;
+  z-index: -1;
+}
