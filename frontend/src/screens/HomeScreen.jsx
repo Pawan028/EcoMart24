@@ -7,13 +7,15 @@ import Message from '../components/Message';
 import Paginate from '../components/Paginate';
 import Meta from '../components/Meta';
 import ProductCarousel from '../components/ProductCarousel';
-import { FaLeaf, FaAppleAlt, FaBreadSlice, FaCarrot, FaCheese, FaFish, FaCoffee, FaTimes } from 'react-icons/fa';
+import { FaLeaf, FaAppleAlt, FaBreadSlice, FaCarrot, FaCheese, FaFish, FaCoffee, FaTimes, FaMapMarkerAlt, FaTruck, FaClock, FaCheckCircle } from 'react-icons/fa';
 
 const HomeScreen = () => {
   const { pageNumber, keyword } = useParams();
   const [selectedCategory, setSelectedCategory] = useState('');
   const [categories, setCategories] = useState([]);
   const [highRatedProducts, setHighRatedProducts] = useState([]);
+  const [showLocationBanner, setShowLocationBanner] = useState(true);
+  const [savedLocation, setSavedLocation] = useState(null);
   const navigate = useNavigate();
 
   const { data, isLoading, error } = useGetProductsQuery({
@@ -44,6 +46,13 @@ const HomeScreen = () => {
     }
   }, [data]);
 
+  useEffect(() => {
+    const location = localStorage.getItem('location');
+    if (location) {
+      setSavedLocation(JSON.parse(location));
+    }
+  }, []);
+
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
     if (category) {
@@ -70,6 +79,92 @@ const HomeScreen = () => {
       <Meta title="Welcome to EcoMart | Home" />
 
       <div className="relative w-full min-h-screen">
+        {/* Location Banner */}
+        {!keyword && showLocationBanner && (
+          <div className="mx-4 md:mx-6 mt-4 mb-6 animate-fadeIn">
+            {savedLocation ? (
+              <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-4 md:p-6 text-white shadow-lg relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
+                
+                <button
+                  onClick={() => setShowLocationBanner(false)}
+                  className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-lg transition-colors duration-200"
+                >
+                  <FaTimes />
+                </button>
+                
+                <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-4">
+                  <div className="flex items-center gap-3 flex-1">
+                    <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                      <FaMapMarkerAlt className="text-2xl" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <FaCheckCircle className="text-green-200" />
+                        <p className="text-sm font-medium text-green-100">Delivering to</p>
+                      </div>
+                      <p className="font-bold text-lg">{savedLocation.city}, {savedLocation.state} - {savedLocation.pincode}</p>
+                      <div className="flex items-center gap-4 mt-2 text-sm">
+                        <div className="flex items-center gap-1">
+                          <FaTruck />
+                          <span>Fast Delivery</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <FaClock />
+                          <span>30-60 mins</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem('location');
+                      setSavedLocation(null);
+                      window.dispatchEvent(new Event('storage'));
+                    }}
+                    className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-200 font-semibold whitespace-nowrap"
+                  >
+                    Change Location
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-gradient-to-r from-orange-500 to-amber-600 rounded-2xl p-4 md:p-6 text-white shadow-lg relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
+                
+                <button
+                  onClick={() => setShowLocationBanner(false)}
+                  className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-lg transition-colors duration-200"
+                >
+                  <FaTimes />
+                </button>
+                
+                <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-4">
+                  <div className="flex items-center gap-3 flex-1">
+                    <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 animate-pulse">
+                      <FaMapMarkerAlt className="text-2xl" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-lg mb-1">📍 Set Your Delivery Location</p>
+                      <p className="text-sm text-orange-100">Check if we deliver to your area and get fresh groceries in 30-60 mins!</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      document.querySelector('[data-location-trigger]')?.click();
+                    }}
+                    className="px-6 py-3 bg-white text-orange-600 hover:bg-orange-50 rounded-lg transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 whitespace-nowrap"
+                  >
+                    Set Location Now
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Hero Section */}
         <div className="mb-8">
           {!keyword ? (

@@ -135,6 +135,7 @@ const Header = () => {
               {/* Location */}
               <button
                 onClick={() => setShowCard(!showCard)}
+                data-location-trigger
                 className={`px-3 py-2 rounded-lg font-medium transition-all duration-300 flex items-center gap-2 ${
                   isScrolled 
                     ? 'text-gray-700 hover:bg-gray-100' 
@@ -323,7 +324,11 @@ const Header = () => {
               
               <div className="my-4 border-t border-gray-200"></div>
 
-              <button onClick={() => { setShowCard(!showCard); setIsMenuOpen(false); }} className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors">
+              <button 
+                onClick={() => { setShowCard(!showCard); setIsMenuOpen(false); }} 
+                data-location-trigger
+                className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors"
+              >
                 <FaMapMarkerAlt className="text-green-600 text-xl" />
                 <span className="font-medium">Set Location</span>
               </button>
