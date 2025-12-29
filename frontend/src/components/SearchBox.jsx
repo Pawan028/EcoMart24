@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { FaSearch, FaTimes } from 'react-icons/fa';
 
 const SearchBox = () => {
   const navigate = useNavigate();
   const { keyword: urlKeyword } = useParams();
-
   const [keyword, setKeyword] = useState(urlKeyword || '');
+  const [isFocused, setIsFocused] = useState(false);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    if (keyword) {
+    if (keyword.trim()) {
       navigate(`/search/${keyword.trim()}`);
       setKeyword('');
     } else {
@@ -18,24 +18,73 @@ const SearchBox = () => {
     }
   };
 
+  const clearSearch = () => {
+    setKeyword('');
+    navigate('/');
+  };
+
   return (
-    <form onSubmit={submitHandler} className="flex items-center space-x-2 bg-white rounded-lg shadow-lg overflow-hidden">
-      <input
-        type="text"
-        name="q"
-        onChange={(e) => setKeyword(e.target.value)}
-        value={keyword}
-        placeholder="Search Products..."
-        className="flex-grow p-3 rounded-l-lg border-0 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
-      />
-      <button
-        type="submit"
-        className="bg-blue-500 text-white py-3 px-4 rounded-r-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
+    <form onSubmit={submitHandler} className="w-full max-w-2xl mx-auto">
+      <div
+        className={`relative flex items-center bg-white rounded-full shadow-md transition-all duration-300 ${
+          isFocused ? 'shadow-lg ring-2 ring-green-500/50' : 'shadow-md'
+        }`}
       >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 20a9 9 0 1 0-9-9 9 9 0 0 0 9 9zm0-4.5a4.5 4.5 0 1 1 4.5-4.5A4.5 4.5 0 0 1 11 15.5zM21 21l-6-6" />
-        </svg>
-      </button>
+        {/* Search Icon */}
+        <div className="pl-6 pr-3">
+          <FaSearch className={`text-lg transition-colors duration-200 ${isFocused ? 'text-green-600' : 'text-gray-400'}`} />
+        </div>
+
+        {/* Input Field */}
+        <input
+          type="text"
+          name="q"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          placeholder="Search for fresh vegetables, fruits, groceries..."
+          className="flex-1 py-4 px-2 bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none text-base"
+        />
+
+        {/* Clear Button */}
+        {keyword && (
+          <button
+            type="button"
+            onClick={clearSearch}
+            className="p-2 mr-2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+            aria-label="Clear search"
+          >
+            <FaTimes />
+          </button>
+        )}
+
+        {/* Search Button */}
+        <button
+          type="submit"
+          className="m-1 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-full hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
+        >
+          Search
+        </button>
+      </div>
+
+      {/* Popular Searches */}
+      <div className="mt-4 flex flex-wrap items-center gap-2 justify-center">
+        <span className="text-sm text-gray-500">Popular:</span>
+        {['Tomato', 'Onion', 'Milk', 'Rice', 'Fruits'].map((term) => (
+          <button
+            key={term}
+            type="button"
+            onClick={() => {
+              setKeyword(term);
+              navigate(`/search/${term}`);
+            }}
+            className="px-3 py-1 text-sm bg-gray-100 hover:bg-green-100 text-gray-700 hover:text-green-700 rounded-full transition-colors duration-200"
+          >
+            {term}
+          </button>
+        ))}
+      </div>
     </form>
   );
 };

@@ -23,72 +23,135 @@ const TrackOrderScreen = () => {
   const status = order?.status || {};
   const timestamps = order?.timestamps || {};
 
+  const trackingSteps = [
+    { key: 'confirmed', label: 'Order Confirmed', icon: '✓' },
+    { key: 'placed', label: 'Order Placed', icon: '📦' },
+    { key: 'shipped', label: 'Shipped', icon: '🚚' },
+    { key: 'outForDelivery', label: 'Out for Delivery', icon: '🛵' },
+    { key: 'delivered', label: 'Delivered', icon: '✨' },
+  ];
+
+  const getCurrentStep = () => {
+    if (status.delivered) return 4;
+    if (status.outForDelivery) return 3;
+    if (status.shipped) return 2;
+    if (status.placed) return 1;
+    if (status.confirmed) return 0;
+    return -1;
+  };
+
+  const currentStepIndex = getCurrentStep();
+
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-8 text-center">Track Your Order</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
-          <h2 className="text-2xl font-semibold mb-6">Order Status</h2>
-          <ul className="space-y-4">
-            {/* Status Items */}
-            <li className={`relative p-4 rounded-lg shadow-md transition-all duration-300 ${status.confirmed ? 'bg-green-100' : 'bg-gray-100'}`}>
-              <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 w-4 h-4 rounded-full ${status.confirmed ? 'bg-green-500' : 'bg-gray-500'}`}></div>
-              <div className="ml-8">
-                <span className="text-xl font-medium">Order Confirmed</span>
-                <span className="block text-sm mt-2">
-                  {timestamps.confirmed ? new Date(timestamps.confirmed).toLocaleString() : 'Pending'}
-                </span>
-              </div>
-            </li>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-green-50 py-12 px-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12 animate-fadeIn">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+            Track Your Order
+          </h1>
+          <p className="text-gray-600">
+            Order ID: <span className="font-mono font-semibold">#{order._id.slice(-8)}</span>
+          </p>
+        </div>
 
-            <li className={`relative p-4 rounded-lg shadow-md transition-all duration-300 ${status.placed ? 'bg-green-100' : 'bg-gray-100'}`}>
-              <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 w-4 h-4 rounded-full ${status.placed ? 'bg-green-500' : 'bg-gray-500'}`}></div>
-              <div className="ml-8">
-                <span className="text-xl font-medium">Order Placed</span>
-                <span className="block text-sm mt-2">
-                  {timestamps.placed ? new Date(timestamps.placed).toLocaleString() : 'Pending'}
-                </span>
-              </div>
-            </li>
+        {/* Tracking Timeline */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 animate-fadeIn">
+          {/* Progress Bar */}
+          <div className="relative mb-16">
+            <div className="flex justify-between items-center">
+              {trackingSteps.map((step, index) => (
+                <div key={step.key} className="flex-1 relative">
+                  {/* Connector Line */}
+                  {index < trackingSteps.length - 1 && (
+                    <div className="absolute top-10 left-1/2 w-full h-1 -z-10">
+                      <div className="w-full h-full bg-gray-200 rounded"></div>
+                      <div
+                        className={`absolute top-0 left-0 h-full bg-gradient-to-r from-green-500 to-emerald-600 rounded transition-all duration-500 ${
+                          index < currentStepIndex ? 'w-full' : 'w-0'
+                        }`}
+                      ></div>
+                    </div>
+                  )}
 
-            <li className={`relative p-4 rounded-lg shadow-md transition-all duration-300 ${status.shipped ? 'bg-green-100' : 'bg-gray-100'}`}>
-              <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 w-4 h-4 rounded-full ${status.shipped ? 'bg-green-500' : 'bg-gray-500'}`}></div>
-              <div className="ml-8">
-                <span className="text-xl font-medium">Shipped</span>
-                <span className="block text-sm mt-2">
-                  {timestamps.shipped ? new Date(timestamps.shipped).toLocaleString() : 'Pending'}
-                </span>
-              </div>
-            </li>
-
-            <li className={`relative p-4 rounded-lg shadow-md transition-all duration-300 ${status.outForDelivery ? 'bg-green-100' : 'bg-gray-100'}`}>
-              <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 w-4 h-4 rounded-full ${status.outForDelivery ? 'bg-green-500' : 'bg-gray-500'}`}></div>
-              <div className="ml-8">
-                <span className="text-xl font-medium">Out for Delivery</span>
-                <span className="block text-sm mt-2">
-                  {timestamps.outForDelivery ? new Date(timestamps.outForDelivery).toLocaleString() : 'Pending'}
-                </span>
-              </div>
-            </li>
-
-            <li className={`relative p-4 rounded-lg shadow-md transition-all duration-300 ${status.delivered ? 'bg-green-100' : 'bg-gray-100'}`}>
-              <div className={`absolute left-0 top-1/2 transform -translate-y-1/2 w-4 h-4 rounded-full ${status.delivered ? 'bg-green-500' : 'bg-gray-500'}`}></div>
-              <div className="ml-8">
-                <span className="text-xl font-medium">Delivered</span>
-                <span className="block text-sm mt-2">
-                  {timestamps.delivered ? new Date(timestamps.delivered).toLocaleString() : 'Expected within 2 hours'}
-                </span>
-              </div>
-            </li>
-
-            {status.delivered && (
-              <li className="p-4 bg-green-100 rounded-lg shadow-md">
-                <div className="ml-8">
-                  <span className="text-xl font-bold">Thank you for shopping with us!</span>
+                  {/* Step Circle */}
+                  <div className="flex flex-col items-center">
+                    <div
+                      className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl mb-4 transition-all duration-300 ${
+                        index <= currentStepIndex
+                          ? 'bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/50 scale-110'
+                          : 'bg-gray-200'
+                      }`}
+                    >
+                      {step.icon}
+                    </div>
+                    <div className="text-center">
+                      <p
+                        className={`font-semibold mb-1 ${
+                          index <= currentStepIndex ? 'text-green-600' : 'text-gray-500'
+                        }`}
+                      >
+                        {step.label}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {timestamps[step.key]
+                          ? new Date(timestamps[step.key]).toLocaleString('en-IN', {
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })
+                          : index === currentStepIndex + 1
+                          ? 'Processing...'
+                          : 'Pending'}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </li>
+              ))}
+            </div>
+          </div>
+
+          {/* Status Message */}
+          <div className="text-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl">
+            {status.delivered ? (
+              <div>
+                <p className="text-2xl font-bold text-green-600 mb-2">
+                  🎉 Order Delivered Successfully!
+                </p>
+                <p className="text-gray-700">
+                  Thank you for shopping with EcoMart. We hope you enjoy your fresh products!
+                </p>
+              </div>
+            ) : status.outForDelivery ? (
+              <div>
+                <p className="text-2xl font-bold text-orange-600 mb-2">
+                  🚚 Out for Delivery
+                </p>
+                <p className="text-gray-700">
+                  Your order is on its way! Expected delivery within 2 hours.
+                </p>
+              </div>
+            ) : status.shipped ? (
+              <div>
+                <p className="text-2xl font-bold text-blue-600 mb-2">
+                  📦 Order Shipped
+                </p>
+                <p className="text-gray-700">
+                  Your order has been shipped and is in transit.
+                </p>
+              </div>
+            ) : (
+              <div>
+                <p className="text-2xl font-bold text-green-600 mb-2">
+                  ✓ Order Confirmed
+                </p>
+                <p className="text-gray-700">
+                  We're preparing your order for shipment.
+                </p>
+              </div>
             )}
-          </ul>
+          </div>
         </div>
       </div>
     </div>

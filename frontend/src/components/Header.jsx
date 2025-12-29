@@ -16,8 +16,10 @@ const Header = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
   const menuRef = useRef(null);
   const cardRef = useRef(null);
+  const userDropdownRef = useRef(null);
   
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -63,10 +65,13 @@ const Header = () => {
       if (cardRef.current && !cardRef.current.contains(event.target) && showCard) {
         setShowCard(false);
       }
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target) && showUserDropdown) {
+        setShowUserDropdown(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isMenuOpen, showCard]);
+  }, [isMenuOpen, showCard, showUserDropdown]);
 
   const cartItemsCount = cartItems.reduce((a, c) => a + c.qty, 0);
 
@@ -156,12 +161,14 @@ const Header = () => {
 
               {/* User Menu */}
               {userInfo ? (
-                <div className="relative group">
-                  <button className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 ${
-                    isScrolled 
-                      ? 'text-gray-700 hover:bg-gray-100' 
-                      : 'text-white hover:bg-white/20'
-                  }`}>
+                <div className="relative" ref={userDropdownRef}>
+                  <button 
+                    onClick={() => setShowUserDropdown(!showUserDropdown)}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 ${
+                      isScrolled 
+                        ? 'text-gray-700 hover:bg-gray-100' 
+                        : 'text-white hover:bg-white/20'
+                    }`}>
                     <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-400 to-emerald-500 flex items-center justify-center text-white font-bold">
                       {userInfo.name.charAt(0).toUpperCase()}
                     </div>
@@ -169,28 +176,30 @@ const Header = () => {
                   </button>
                   
                   {/* Dropdown */}
-                  <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden">
-                    <div className="p-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white">
-                      <p className="font-bold">{userInfo.name}</p>
-                      <p className="text-sm text-green-100">{userInfo.email}</p>
-                    </div>
-                    <div className="py-2">
-                      <Link to="/profile" className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition-colors">
-                        <FaUser className="text-gray-600" />
-                        <span>My Profile</span>
-                      </Link>
-                      {userInfo.isAdmin && (
-                        <Link to="/admin/dashboard" className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition-colors">
-                          <FaTachometerAlt className="text-gray-600" />
-                          <span>Dashboard</span>
+                  {showUserDropdown && (
+                    <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-2xl overflow-hidden animate-fadeIn z-50">
+                      <div className="p-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white">
+                        <p className="font-bold">{userInfo.name}</p>
+                        <p className="text-sm text-green-100">{userInfo.email}</p>
+                      </div>
+                      <div className="py-2">
+                        <Link to="/profile" onClick={() => setShowUserDropdown(false)} className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition-colors">
+                          <FaUser className="text-gray-600" />
+                          <span>My Profile</span>
                         </Link>
-                      )}
-                      <button onClick={logoutHandler} className="w-full flex items-center gap-3 px-4 py-2 hover:bg-red-50 text-red-600 transition-colors">
-                        <FaSignOutAlt />
-                        <span>Logout</span>
-                      </button>
+                        {userInfo.isAdmin && (
+                          <Link to="/admin/dashboard" onClick={() => setShowUserDropdown(false)} className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition-colors">
+                            <FaTachometerAlt className="text-gray-600" />
+                            <span>Dashboard</span>
+                          </Link>
+                        )}
+                        <button onClick={logoutHandler} className="w-full flex items-center gap-3 px-4 py-2 hover:bg-red-50 text-red-600 transition-colors">
+                          <FaSignOutAlt />
+                          <span>Logout</span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               ) : (
                 <Link 

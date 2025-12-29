@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useGetProductsQuery } from '../slices/productsApiSlice';
 import Product from '../components/Product';
-import Loader from '../components/Loader';
+import { ProductSkeleton } from '../components/SkeletonLoaders';
 import Message from '../components/Message';
 import Paginate from '../components/Paginate';
 import Meta from '../components/Meta';
 import ProductCarousel from '../components/ProductCarousel';
-import { FaLeaf, FaAppleAlt, FaBreadSlice, FaCarrot, FaCheese, FaFish, FaCoffee } from 'react-icons/fa';
+import { FaLeaf, FaAppleAlt, FaBreadSlice, FaCarrot, FaCheese, FaFish, FaCoffee, FaTimes } from 'react-icons/fa';
 
 const HomeScreen = () => {
   const { pageNumber, keyword } = useParams();
@@ -46,8 +46,12 @@ const HomeScreen = () => {
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
-    navigate(`/page/${pageNumber || 1}?category=${category}`);
-    refetch();
+    if (category) {
+      navigate(`/?category=${category}`);
+    } else {
+      navigate('/');
+    }
+    // Refetch will happen automatically due to query params change
   };
 
   useEffect(() => {
@@ -97,26 +101,38 @@ const HomeScreen = () => {
             
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               <div
-                className="group relative cursor-pointer flex flex-col items-center justify-center p-6 rounded-2xl bg-white shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 border-transparent hover:border-green-500"
+                className={`group relative cursor-pointer flex flex-col items-center justify-center p-6 rounded-2xl bg-white shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 ${
+                  selectedCategory === '' ? 'border-green-500 bg-green-50' : 'border-transparent hover:border-green-500'
+                }`}
                 onClick={() => handleCategorySelect('')}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className={`absolute inset-0 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl transition-opacity duration-300 ${
+                  selectedCategory === '' ? 'opacity-10' : 'opacity-0 group-hover:opacity-100'
+                }`}></div>
                 <div className="relative z-10 flex flex-col items-center">
                   {getCategoryIcon('All')}
-                  <span className="text-sm md:text-base font-semibold text-gray-800 group-hover:text-white transition-colors duration-300 text-center">All Products</span>
+                  <span className={`text-sm md:text-base font-semibold transition-colors duration-300 text-center ${
+                    selectedCategory === '' ? 'text-green-600' : 'text-gray-800 group-hover:text-white'
+                  }`}>All Products</span>
                 </div>
               </div>
               
               {categories.map((category, index) => (
                 <div
                   key={index}
-                  className="group relative cursor-pointer flex flex-col items-center justify-center p-6 rounded-2xl bg-white shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 border-transparent hover:border-green-500"
+                  className={`group relative cursor-pointer flex flex-col items-center justify-center p-6 rounded-2xl bg-white shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 ${
+                    selectedCategory === category ? 'border-green-500 bg-green-50' : 'border-transparent hover:border-green-500'
+                  }`}
                   onClick={() => handleCategorySelect(category)}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className={`absolute inset-0 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl transition-opacity duration-300 ${
+                    selectedCategory === category ? 'opacity-10' : 'opacity-0 group-hover:opacity-100'
+                  }`}></div>
                   <div className="relative z-10 flex flex-col items-center">
                     {getCategoryIcon(category)}
-                    <span className="text-sm md:text-base font-semibold text-gray-800 group-hover:text-white transition-colors duration-300 text-center">{category}</span>
+                    <span className={`text-sm md:text-base font-semibold transition-colors duration-300 text-center ${
+                      selectedCategory === category ? 'text-green-600' : 'text-gray-800 group-hover:text-white'
+                    }`}>{category}</span>
                   </div>
                 </div>
               ))}
@@ -133,7 +149,11 @@ const HomeScreen = () => {
             </div>
             
             {isLoading ? (
-              <Loader />
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {[...Array(4)].map((_, index) => (
+                  <ProductSkeleton key={index} />
+                ))}
+              </div>
             ) : error ? (
               <Message variant="danger">
                 {error?.data?.message || error.error}
@@ -157,7 +177,7 @@ const HomeScreen = () => {
         </div>
 
         {/* Products by Category */}
-        {!keyword && categories.map((category) => {
+        {!keyword && !selectedCategory && categories.map((category) => {
           const categoryProducts = data?.products.filter((product) => product.category === category) || [];
           if (categoryProducts.length === 0) return null;
           
@@ -170,7 +190,13 @@ const HomeScreen = () => {
                 </div>
                 
                 {isLoading ? (
-                  <Loader />
+                  <div className="flex gap-6">
+                    {[...Array(4)].map((_, index) => (
+                      <div key={index} className="min-w-[280px]">
+                        <ProductSkeleton />
+                      </div>
+                    ))}
+                  </div>
                 ) : error ? (
                   <Message variant="danger">
                     {error?.data?.message || error.error}
@@ -190,6 +216,56 @@ const HomeScreen = () => {
             </div>
           );
         })}
+
+        {/* Selected Category Products Grid */}
+        {!keyword && selectedCategory && (
+          <div className="mb-12 px-4 md:px-6">
+            <div className="max-w-7xl mx-auto">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl md:text-3xl font-bold text-gray-800">{selectedCategory}</h3>
+                <button 
+                  onClick={() => handleCategorySelect('')}
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors duration-200 flex items-center gap-2"
+                >
+                  <FaTimes />
+                  Clear Filter
+                </button>
+              </div>
+              
+              {isLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {[...Array(8)].map((_, index) => (
+                    <ProductSkeleton key={index} />
+                  ))}
+                </div>
+              ) : error ? (
+                <Message variant="danger">
+                  {error?.data?.message || error.error}
+                </Message>
+              ) : data?.products && data.products.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {data.products.map((product) => (
+                    <Product key={product._id} product={product} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-16">
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
+                    <FaLeaf className="text-4xl text-gray-400" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-700 mb-2">No products found in this category</h3>
+                  <p className="text-gray-500 mb-6">Try selecting a different category or browse all products</p>
+                  <button
+                    onClick={() => handleCategorySelect('')}
+                    className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-300"
+                  >
+                    View All Products
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* All Products Grid when keyword is present */}
         {keyword && data?.products && (
