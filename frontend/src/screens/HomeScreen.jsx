@@ -16,7 +16,7 @@ const HomeScreen = () => {
   const [highRatedProducts, setHighRatedProducts] = useState([]);
   const navigate = useNavigate();
 
-  const { data, isLoading, error, refetch } = useGetProductsQuery({
+  const { data, isLoading, error } = useGetProductsQuery({
     keyword,
     pageNumber,
     category: selectedCategory,
