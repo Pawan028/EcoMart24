@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { FaUser, FaEnvelope, FaCalendar } from 'react-icons/fa';
+import { FaEnvelope, FaCalendar } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
 const ProfileHeader = () => {

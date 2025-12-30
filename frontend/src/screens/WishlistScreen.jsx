@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { FaHeart, FaShoppingCart, FaTrash, FaArrowLeft } from 'react-icons/fa';
-import Message from '../components/Message';
 import Meta from '../components/Meta';
 
 const WishlistScreen = () => {
