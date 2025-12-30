@@ -1,31 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ===========================
+   CSS Variables - Design Tokens
+   =========================== */
+@layer base {
+  :root {
+    /* Colors */
+    --color-primary: 34 197 94;
+    --color-secondary: 20 184 166;
+    --color-accent: 251 191 36;
+    --color-success: 34 197 94;
+    --color-warning: 245 158 11;
+    --color-error: 239 68 68;
+    --color-info: 59 130 246;
+
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+    --shadow-premium: 0 10px 40px rgba(0, 0, 0, 0.1);
+
+    /* Transitions */
+    --transition-fast: 150ms;
+    --transition-base: 300ms;
+    --transition-slow: 500ms;
+  }
+
+  .dark {
+    --color-primary: 74 222 128;
+    --color-secondary: 45 212 191;
+  }
+}
+
+/* ===========================
+   Keyframe Animations
+   =========================== */
 @keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
+
+  0%,
   100% {
     background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
   }
 }
 
 @keyframes float-shapes {
-  0% {
+
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg);
     opacity: 0.1;
   }
+
   50% {
     transform: translateY(-30px) rotate(180deg);
     opacity: 0.15;
-  }
-  100% {
-    transform: translateY(0px) rotate(360deg);
-    opacity: 0.1;
   }
 }
 
@@ -33,6 +78,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -43,12 +89,165 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes glow {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ===========================
+   Base Styles
+   =========================== */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* ===========================
+   Premium Background Pattern
+   =========================== */
+body.bg-moving-pattern {
+  background: linear-gradient(-45deg, #f0fdf4 0%, #dcfce7 25%, #bbf7d0 40%, #dcfce7 60%, #f0fdf4 75%, #ecfdf5 100%);
+  background-size: 400% 400%;
+  animation: gradient-shift 20s ease infinite;
+  background-attachment: fixed;
+  position: relative;
+}
+
+/* Fresh produce inspired gradient orbs */
+body.bg-moving-pattern::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(34, 197, 94, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 85% 30%, rgba(74, 222, 128, 0.10) 0%, transparent 35%),
+    radial-gradient(circle at 50% 80%, rgba(22, 163, 74, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 20% 70%, rgba(134, 239, 172, 0.10) 0%, transparent 35%),
+    radial-gradient(circle at 80% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Subtle organic texture overlay */
+body.bg-moving-pattern::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(ellipse at 30% 40%, rgba(76, 175, 80, 0.04) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 60%, rgba(56, 142, 60, 0.03) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ===========================
+   Animation Utility Classes
+   =========================== */
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-in-out;
 }
@@ -57,72 +256,101 @@
   animation: slideDown 0.3s ease-in-out;
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  overflow-x: hidden;
+.animate-scaleIn {
+  animation: scaleIn 0.4s ease-out;
 }
 
-html, body, #root {
-  height: 100%;  
+.animate-slideInUp {
+  animation: slideInUp 0.5s ease-out;
 }
 
-body.bg-moving-pattern {
-  background: linear-gradient(-45deg, #ffffff 0%, #f0f5f0 25%, #e8f5e9 50%, #f1f8f6 75%, #ffffff 100%);
-  background-size: 400% 400%;
-  animation: gradient-shift 15s ease infinite;
-  background-attachment: fixed;
-  position: relative;
+.animate-shimmer {
+  animation: shimmer 2s linear infinite;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  background-size: 200% 100%;
 }
 
-/* Subtle geometric pattern overlay */
-body.bg-moving-pattern::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: 
-    radial-gradient(circle at 20% 50%, rgba(76, 175, 80, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(56, 142, 60, 0.06) 0%, transparent 50%),
-    radial-gradient(circle at 40% 80%, rgba(129, 199, 132, 0.05) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: -1;
-}
-
-/* Subtle dots and lines pattern */
-body.bg-moving-pattern::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: 
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(76, 175, 80, 0.03) 2px,
-      rgba(76, 175, 80, 0.03) 4px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 2px,
-      rgba(76, 175, 80, 0.03) 2px,
-      rgba(76, 175, 80, 0.03) 4px
-    );
-  pointer-events: none;
-  z-index: -1;
-}
-
-/* Utility classes */
+/* ===========================
+   Utility Classes
+   =========================== */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Hide scrollbar but keep functionality */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(34, 197, 94, 0.3);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 197, 94, 0.5);
+}
+
+/* Glass Effect */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: linear-gradient(135deg, #22c55e 0%, #14b8a6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Premium Card Hover */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* Smooth Transitions */
+.transition-smooth {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus Styles */
+*:focus-visible {
+  outline: 2px solid rgb(34 197 94);
+  outline-offset: 2px;
+  border-radius: 4px;
 }

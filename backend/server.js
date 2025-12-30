@@ -10,6 +10,7 @@ const orderRoutes = require('./routes/orderRoutes');
 const Razorpay = require('razorpay');
 const uploadRoutes = require('./routes/uploadRoutes');
 const locationRoutes = require('./routes/locationRoutes');
+const addressRoutes = require('./routes/addressRoutes');
 const statsRouter = require('./routes/stats');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
@@ -37,6 +38,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/admin', statsRouter);
 app.use('/api/locations', locationRoutes);
+app.use('/api/addresses', addressRoutes);
 
 // Serve static files from the React frontend app
 app.use(express.static(path.join(__dirname, 'frontend/build')));

@@ -15,6 +15,7 @@ import ProductScreen from './screens/ProductScreen';
 import CartScreen from './screens/CartScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
+import AuthScreen from './screens/AuthScreen';
 import ShippingScreen from './screens/ShippingScreen';
 import PaymentScreen from './screens/PaymentScreen'; // Razorpay integration
 import PlaceOrderScreen from './screens/PlaceOrderScreen';
@@ -38,6 +39,15 @@ import PaymentSuccess from './components/PaymentSuccess';
 import FAQ from './screens/FAQ';
 import Shop from './screens/Shop';
 import AnalyticsDashboard from './screens/admin/Analytic';
+import DealsScreen from './screens/DealsScreen';
+import NewArrivalsScreen from './screens/NewArrivalsScreen';
+import CategoriesScreen from './screens/CategoriesScreen';
+import WishlistScreen from './screens/WishlistScreen';
+import ProfileLayout from './components/profile/ProfileLayout';
+import PersonalInfoSection from './components/profile/PersonalInfoSection';
+import AddressManagement from './components/profile/AddressManagement';
+import OrdersSection from './components/profile/OrdersSection';
+import SecuritySection from './components/profile/SecuritySection';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -48,12 +58,16 @@ const router = createBrowserRouter(
       <Route path='/search/:keyword/page/:pageNumber' element={<HomeScreen />} />
       <Route path='/product/:id' element={<ProductScreen />} />
       <Route path='/cart' element={<CartScreen />} />
-      <Route path='/login' element={<LoginScreen />} />
-      <Route path='/register' element={<RegisterScreen />} />
+      <Route path='/login' element={<AuthScreen />} />
+      <Route path='/register' element={<AuthScreen />} />
       <Route path='/about' element={<About />} />
       <Route path='/contact' element={<ContactUs />} />
       <Route path='/faq' element={<FAQ />} />
       <Route path='/shop' element={<Shop />} />
+      <Route path='/deals' element={<DealsScreen />} />
+      <Route path='/new-arrivals' element={<NewArrivalsScreen />} />
+      <Route path='/categories' element={<CategoriesScreen />} />
+      <Route path='/wishlist' element={<WishlistScreen />} />
 
       {/* Registered users */}
       <Route path='' element={<PrivateRoute />}>
@@ -61,14 +75,22 @@ const router = createBrowserRouter(
         <Route path='/payment' element={<PaymentScreen />} />
         <Route path='/placeorder' element={<PlaceOrderScreen />} />
         <Route path='/order/:id' element={<OrderScreen />} />
-        <Route path='/profile' element={<ProfileScreen />} />
+
+        {/* Profile Routes with Layout */}
+        <Route path='/profile' element={<ProfileLayout />}>
+          <Route index element={<PersonalInfoSection />} />
+          <Route path='addresses' element={<AddressManagement />} />
+          <Route path='orders' element={<OrdersSection />} />
+          <Route path='security' element={<SecuritySection />} />
+        </Route>
+
         <Route path='/track-order/:id' element={<TrackOrderScreen />} />
         <Route path='/paymentsuccess' element={<PaymentSuccess />} />
       </Route>
 
       {/* Admin routes */}
       <Route path='' element={<AdminRoute />}>
-      <Route path='/admin/dashboard' element={<AdminDashboard />}>
+        <Route path='/admin/dashboard' element={<AdminDashboard />}>
           <Route path='dash' element={<AnalyticsDashboard />} />
           <Route path='userlist' element={<UserListScreen />} />
           <Route path='productlist' element={<ProductListScreen />} />

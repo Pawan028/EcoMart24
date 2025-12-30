@@ -6,7 +6,7 @@ import { ProductSkeleton } from '../components/SkeletonLoaders';
 import Message from '../components/Message';
 import Paginate from '../components/Paginate';
 import Meta from '../components/Meta';
-import ProductCarousel from '../components/ProductCarousel';
+import HeroSection from '../components/HeroSection';
 import { FaLeaf, FaAppleAlt, FaBreadSlice, FaCarrot, FaCheese, FaFish, FaCoffee, FaTimes, FaMapMarkerAlt, FaTruck, FaClock, FaCheckCircle } from 'react-icons/fa';
 
 const HomeScreen = () => {
@@ -53,7 +53,31 @@ const HomeScreen = () => {
     if (location) {
       setSavedLocation(JSON.parse(location));
     }
+
+    // Listen for location changes via custom event
+    const handleLocationUpdate = (event) => {
+      if (event.detail) {
+        setSavedLocation(event.detail);
+      } else {
+        // Fallback to reading from localStorage
+        const updatedLocation = localStorage.getItem('location');
+        if (updatedLocation) {
+          setSavedLocation(JSON.parse(updatedLocation));
+        } else {
+          setSavedLocation(null);
+        }
+      }
+    };
+
+    window.addEventListener('locationUpdated', handleLocationUpdate);
+    return () => window.removeEventListener('locationUpdated', handleLocationUpdate);
   }, []);
+
+  useEffect(() => {
+    if (keyword) {
+      setSelectedCategory('');
+    }
+  }, [keyword]);
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
@@ -65,12 +89,6 @@ const HomeScreen = () => {
     // Refetch will happen automatically due to query params change
   };
 
-  useEffect(() => {
-    if (keyword) {
-      setSelectedCategory('');
-    }
-  }, [keyword]);
-
   const getCategoryIcon = (category) => {
     const IconComponent = categoryIcons[category] || FaLeaf;
     return <IconComponent className="text-4xl mb-3 text-green-600 group-hover:text-white transition-colors duration-300" />;
@@ -79,9 +97,9 @@ const HomeScreen = () => {
   // Sort and filter products for search results
   const getFilteredAndSortedProducts = () => {
     if (!data?.products) return [];
-    
+
     let filtered = [...data.products];
-    
+
     // Filter by price range
     if (priceRange !== 'all') {
       const ranges = {
@@ -93,7 +111,7 @@ const HomeScreen = () => {
       const [min, max] = ranges[priceRange] || [0, Infinity];
       filtered = filtered.filter(p => p.price >= min && p.price < max);
     }
-    
+
     // Sort products
     switch (sortBy) {
       case 'priceLow':
@@ -112,7 +130,7 @@ const HomeScreen = () => {
         // default order from API
         break;
     }
-    
+
     return filtered;
   };
 
@@ -128,14 +146,14 @@ const HomeScreen = () => {
               <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-4 md:p-6 text-white shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
-                
+
                 <button
                   onClick={() => setShowLocationBanner(false)}
                   className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-lg transition-colors duration-200"
                 >
                   <FaTimes />
                 </button>
-                
+
                 <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-4">
                   <div className="flex items-center gap-3 flex-1">
                     <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
@@ -161,9 +179,11 @@ const HomeScreen = () => {
                   </div>
                   <button
                     onClick={() => {
-                      localStorage.removeItem('location');
-                      setSavedLocation(null);
-                      window.dispatchEvent(new Event('storage'));
+                      // Trigger location modal from header
+                      const locationTrigger = document.querySelector('[data-location-trigger]');
+                      if (locationTrigger) {
+                        locationTrigger.click();
+                      }
                     }}
                     className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-200 font-semibold whitespace-nowrap"
                   >
@@ -175,14 +195,14 @@ const HomeScreen = () => {
               <div className="bg-gradient-to-r from-orange-500 to-amber-600 rounded-2xl p-4 md:p-6 text-white shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
-                
+
                 <button
                   onClick={() => setShowLocationBanner(false)}
                   className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-lg transition-colors duration-200"
                 >
                   <FaTimes />
                 </button>
-                
+
                 <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-4">
                   <div className="flex items-center gap-3 flex-1">
                     <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 animate-pulse">
@@ -208,25 +228,25 @@ const HomeScreen = () => {
         )}
 
         {/* Hero Section */}
-        <div className="mb-8">
-          {!keyword ? (
-            <div className="relative overflow-hidden rounded-2xl mx-4 md:mx-6 mt-4 shadow-2xl">
-              <ProductCarousel products={highRatedProducts} />
-            </div>
-          ) : (
-            <div className="px-4 py-4">
-              <Link 
-                to="/" 
-                className="inline-flex items-center gap-2 bg-white text-green-600 py-3 px-6 rounded-xl shadow-lg hover:shadow-xl hover:bg-green-50 transition-all duration-300 font-semibold"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-                Back to Home
-              </Link>
-            </div>
-          )}
-        </div>
+        {!keyword && (
+          <div className="mb-8">
+            <HeroSection />
+          </div>
+        )}
+
+        {keyword && (
+          <div className="px-4 py-4">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 bg-white text-green-600 py-3 px-6 rounded-xl shadow-lg hover:shadow-xl hover:bg-green-50 transition-all duration-300 font-semibold"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back to Home
+            </Link>
+          </div>
+        )}
 
         {/* Category Section */}
         <div className="mb-12 px-4 md:px-6">
@@ -235,41 +255,35 @@ const HomeScreen = () => {
               <h2 className="text-3xl md:text-4xl font-bold text-gray-800">Shop by Category</h2>
               <div className="h-1 flex-1 bg-gradient-to-r from-green-500 to-transparent ml-6 rounded-full"></div>
             </div>
-            
+
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               <div
-                className={`group relative cursor-pointer flex flex-col items-center justify-center p-6 rounded-2xl bg-white shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 ${
-                  selectedCategory === '' ? 'border-green-500 bg-green-50' : 'border-transparent hover:border-green-500'
-                }`}
+                className={`group relative cursor-pointer flex flex-col items-center justify-center p-6 rounded-2xl bg-white shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 ${selectedCategory === '' ? 'border-green-500 bg-green-50' : 'border-transparent hover:border-green-500'
+                  }`}
                 onClick={() => handleCategorySelect('')}
               >
-                <div className={`absolute inset-0 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl transition-opacity duration-300 ${
-                  selectedCategory === '' ? 'opacity-10' : 'opacity-0 group-hover:opacity-100'
-                }`}></div>
+                <div className={`absolute inset-0 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl transition-opacity duration-300 ${selectedCategory === '' ? 'opacity-10' : 'opacity-0 group-hover:opacity-100'
+                  }`}></div>
                 <div className="relative z-10 flex flex-col items-center">
                   {getCategoryIcon('All')}
-                  <span className={`text-sm md:text-base font-semibold transition-colors duration-300 text-center ${
-                    selectedCategory === '' ? 'text-green-600' : 'text-gray-800 group-hover:text-white'
-                  }`}>All Products</span>
+                  <span className={`text-sm md:text-base font-semibold transition-colors duration-300 text-center ${selectedCategory === '' ? 'text-green-600' : 'text-gray-800 group-hover:text-white'
+                    }`}>All Products</span>
                 </div>
               </div>
-              
+
               {categories.map((category, index) => (
                 <div
                   key={index}
-                  className={`group relative cursor-pointer flex flex-col items-center justify-center p-6 rounded-2xl bg-white shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 ${
-                    selectedCategory === category ? 'border-green-500 bg-green-50' : 'border-transparent hover:border-green-500'
-                  }`}
+                  className={`group relative cursor-pointer flex flex-col items-center justify-center p-6 rounded-2xl bg-white shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border-2 ${selectedCategory === category ? 'border-green-500 bg-green-50' : 'border-transparent hover:border-green-500'
+                    }`}
                   onClick={() => handleCategorySelect(category)}
                 >
-                  <div className={`absolute inset-0 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl transition-opacity duration-300 ${
-                    selectedCategory === category ? 'opacity-10' : 'opacity-0 group-hover:opacity-100'
-                  }`}></div>
+                  <div className={`absolute inset-0 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl transition-opacity duration-300 ${selectedCategory === category ? 'opacity-10' : 'opacity-0 group-hover:opacity-100'
+                    }`}></div>
                   <div className="relative z-10 flex flex-col items-center">
                     {getCategoryIcon(category)}
-                    <span className={`text-sm md:text-base font-semibold transition-colors duration-300 text-center ${
-                      selectedCategory === category ? 'text-green-600' : 'text-gray-800 group-hover:text-white'
-                    }`}>{category}</span>
+                    <span className={`text-sm md:text-base font-semibold transition-colors duration-300 text-center ${selectedCategory === category ? 'text-green-600' : 'text-gray-800 group-hover:text-white'
+                      }`}>{category}</span>
                   </div>
                 </div>
               ))}
@@ -284,7 +298,7 @@ const HomeScreen = () => {
               <h2 className="text-3xl md:text-4xl font-bold text-gray-800">Top Rated Products</h2>
               <div className="h-1 flex-1 bg-gradient-to-r from-amber-500 to-transparent ml-6 rounded-full"></div>
             </div>
-            
+
             {isLoading ? (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {[...Array(4)].map((_, index) => (
@@ -317,7 +331,7 @@ const HomeScreen = () => {
         {!keyword && !selectedCategory && categories.map((category) => {
           const categoryProducts = data?.products.filter((product) => product.category === category) || [];
           if (categoryProducts.length === 0) return null;
-          
+
           return (
             <div key={category} className="mb-12 px-4 md:px-6">
               <div className="max-w-7xl mx-auto">
@@ -325,7 +339,7 @@ const HomeScreen = () => {
                   <h3 className="text-2xl md:text-3xl font-bold text-gray-800">{category}</h3>
                   <div className="h-1 flex-1 bg-gradient-to-r from-green-400 to-transparent ml-6 rounded-full"></div>
                 </div>
-                
+
                 {isLoading ? (
                   <div className="flex gap-6">
                     {[...Array(4)].map((_, index) => (
@@ -360,7 +374,7 @@ const HomeScreen = () => {
             <div className="max-w-7xl mx-auto">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-800">{selectedCategory}</h3>
-                <button 
+                <button
                   onClick={() => handleCategorySelect('')}
                   className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors duration-200 flex items-center gap-2"
                 >
@@ -368,7 +382,7 @@ const HomeScreen = () => {
                   Clear Filter
                 </button>
               </div>
-              
+
               {isLoading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {[...Array(8)].map((_, index) => (
@@ -421,8 +435,8 @@ const HomeScreen = () => {
                       </p>
                     )}
                   </div>
-                  <Link 
-                    to="/" 
+                  <Link
+                    to="/"
                     className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors duration-200"
                   >
                     <FaTimes />

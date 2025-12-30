@@ -1,66 +1,62 @@
-const asyncHandler = require('../middleware/asyncHandler'); // Adjust path as necessary
-const Location = require('../models/locationModel');
+const asyncHandler = require('../middleware/asyncHandler');
+const Pincode = require('../models/pincodeModel');
 
-// Get all locations
-const getLocations = asyncHandler(async (req, res) => {
-  const locations = await Location.find({});
-  res.json(locations);
-});
-
-// Add a new location
-const addLocation = asyncHandler(async (req, res) => {
-  const { city, state, pincode } = req.body;
-  const location = new Location({ city, state, pincode });
-  const createdLocation = await location.save();
-  res.status(201).json(createdLocation);
-});
-
-// Delete a location by ID
-const deleteLocation = asyncHandler(async (req, res) => {
-  try {
-    const location = await Location.findById(req.params.id);
-    if (location) {
-      await Location.deleteOne({ _id: req.params.id }); // Use deleteOne instead of remove
-      res.json({ message: 'Location removed' });
-    } else {
-      res.status(404).json({ message: 'Location not found' });
-    }
-  } catch (error) {
-    console.error('Error deleting location:', error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// Update a location by ID
-const updateLocation = asyncHandler(async (req, res) => {
-  const { city, state, pincode } = req.body;
-  const location = await Location.findById(req.params.id);
-  if (location) {
-    location.city = city;
-    location.state = state;
-    location.pincode = pincode;
-    const updatedLocation = await location.save();
-    res.json(updatedLocation);
-  } else {
-    res.status(404).json({ message: 'Location not found' });
-  }
-});
-
-// Check if a location exists by pincode
-const checkLocation = asyncHandler(async (req, res) => {
+// @desc    Check if pincode is serviceable
+// @route   POST /api/locations/check
+// @access  Public
+const checkServiceability = asyncHandler(async (req, res) => {
   const { pincode } = req.body;
-  const location = await Location.findOne({ pincode });
-  if (location) {
-    res.json({ available: true });
-  } else {
-    res.json({ available: false });
+
+  if (!pincode) {
+    res.status(400);
+    throw new Error('Please provide a pincode');
   }
+
+  const location = await Pincode.findOne({ pincode: pincode.toString() });
+
+  if (location && location.isServiceable) {
+    res.json({
+      serviceable: true,
+      city: location.city,
+      state: location.state,
+      deliveryTime: location.deliveryTime,
+      pincode: location.pincode,
+    });
+  } else {
+    res.json({
+      serviceable: false,
+      message: 'Sorry, we do not deliver to this area yet',
+    });
+  }
+});
+
+// @desc    Get all serviceable pincodes
+// @route   GET /api/locations/serviceable
+// @access  Public
+const getServiceablePincodes = asyncHandler(async (req, res) => {
+  const pincodes = await Pincode.find({ isServiceable: true }).select('-__v');
+  res.json(pincodes);
+});
+
+// @desc    Set user location
+// @route   POST /api/locations/set
+// @access  Private
+const setUserLocation = asyncHandler(async (req, res) => {
+  const { pincode, city, state } = req.body;
+
+  // In a real app, you might save this to the user's profile
+  res.json({
+    success: true,
+    location: {
+      pincode,
+      city,
+      state,
+    },
+  });
 });
 
 module.exports = {
-  getLocations,
-  addLocation,
-  deleteLocation,
-  updateLocation,
-  checkLocation
+  checkServiceability,
+  getServiceablePincodes,
+  setUserLocation,
 };

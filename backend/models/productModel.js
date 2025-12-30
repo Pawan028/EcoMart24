@@ -64,6 +64,18 @@ const productSchema = mongoose.Schema(
       required: true,
       default: 0,
     },
+    isOnDeal: {
+      type: Boolean,
+      default: false,
+    },
+    dealPrice: {
+      type: Number,
+      default: 0,
+    },
+    isNew: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

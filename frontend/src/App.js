@@ -2,20 +2,22 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Container } from "react-bootstrap";
 import { Outlet } from "react-router-dom";
-import './index.css'; 
+import './index.css';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import MobileNav from './components/MobileNav';
 import { logout } from './slices/authSlice';
 import { ToastContainer } from 'react-toastify';
 import SplashScreen from './components/SplashScreen';
 import 'react-toastify/dist/ReactToastify.css';
 import LocationCard from './components/LocationCard';
+import ScrollProgress from './components/ScrollProgress';
 
 const App = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
-  const [showCard, setShowCard] = useState(false); 
-  const [locationSet, setLocationSet] = useState(false); 
+  const [showCard, setShowCard] = useState(false);
+  const [locationSet, setLocationSet] = useState(false);
 
   useEffect(() => {
     // Apply floating background to the body
@@ -42,8 +44,8 @@ const App = () => {
   }, [dispatch]);
 
   const handleLocationSet = () => {
-    setLocationSet(true); 
-    setShowCard(false); 
+    setLocationSet(true);
+    setShowCard(false);
   };
 
   return (
@@ -52,17 +54,19 @@ const App = () => {
         <SplashScreen />
       ) : (
         <>
+          <ScrollProgress />
           <ToastContainer />
           <Header setShowCard={setShowCard} />
-          <main className='pt-16 lg:pt-20'>
+          <main className='pt-16 lg:pt-20 pb-20 md:pb-0'>
             <Container>
               <Outlet />
             </Container>
           </main>
           <Footer />
+          <MobileNav />
           {showCard && !locationSet && (
-            <LocationCard 
-              setShowCard={setShowCard} 
+            <LocationCard
+              setShowCard={setShowCard}
               onLocationSet={handleLocationSet}
             />
           )}

@@ -10,11 +10,11 @@ const getProducts = asyncHandler(async (req, res) => {
 
   const keyword = req.query.keyword
     ? {
-        name: {
-          $regex: req.query.keyword,
-          $options: 'i',
-        },
-      }
+      name: {
+        $regex: req.query.keyword,
+        $options: 'i',
+      },
+    }
     : {};
 
   const category = req.query.category ? { category: req.query.category } : {};
@@ -157,6 +157,73 @@ const getTopProducts = asyncHandler(async (req, res) => {
   res.json(products);
 });
 
+// @desc    Get deal products
+// @route   GET /api/products/deals
+// @access  Public
+const getDealProducts = asyncHandler(async (req, res) => {
+  const pageSize = 12;
+  const page = Number(req.query.pageNumber) || 1;
+
+  const count = await Product.countDocuments({ isOnDeal: true });
+  const products = await Product.find({ isOnDeal: true })
+    .limit(pageSize)
+    .skip(pageSize * (page - 1))
+    .sort({ dealPrice: 1 });
+
+  res.json({ products, page, pages: Math.ceil(count / pageSize) });
+});
+
+// @desc    Get new arrival products
+// @route   GET /api/products/new-arrivals
+// @access  Public
+const getNewArrivals = asyncHandler(async (req, res) => {
+  const pageSize = 12;
+  const page = Number(req.query.pageNumber) || 1;
+  const days = Number(req.query.days) || 30;
+
+  const date = new Date();
+  date.setDate(date.getDate() - days);
+
+  const count = await Product.countDocuments({
+    createdAt: { $gte: date }
+  });
+
+  const products = await Product.find({
+    createdAt: { $gte: date }
+  })
+    .limit(pageSize)
+    .skip(pageSize * (page - 1))
+    .sort({ createdAt: -1 });
+
+  res.json({ products, page, pages: Math.ceil(count / pageSize) });
+});
+
+// @desc    Get all categories with product counts
+// @route   GET /api/products/categories
+// @access  Public
+const getCategories = asyncHandler(async (req, res) => {
+  const categories = await Product.aggregate([
+    {
+      $group: {
+        _id: '$category',
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        category: '$_id',
+        count: 1,
+      },
+    },
+    {
+      $sort: { category: 1 },
+    },
+  ]);
+
+  res.json(categories);
+});
+
 module.exports = {
   getProducts,
   getProductById,
@@ -165,4 +232,7 @@ module.exports = {
   deleteProduct,
   createProductReview,
   getTopProducts,
+  getDealProducts,
+  getNewArrivals,
+  getCategories,
 };
